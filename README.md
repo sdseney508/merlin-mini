@@ -4,9 +4,11 @@ This guide launches **Merlin** locally on a single machine using Docker:
 - **Qdrant** (vector DB)
 - **Ollama** (LLM runtime)
 - **Merlin RAG API** (FastAPI app)
-- **Open WebUI** (optional UI for chatting with Ollama)
+- **Open WebUI** (UI required for caht histories and continuous conversations)
 
-Everything is **local-only** (no Traefik, no Tailscale).
+Everything can be run **local-only**.
+
+To enable hitting your copy oF Merlin remotely, you'll need to establish a VPN (tailscale, wiregurad, etc.) and create a node for the docker container.  
 
 ---
 
@@ -246,6 +248,10 @@ Then rerun the launch steps above.
 
 ---
 
-## Notes
+# Notes
 
 - This setup is local-only. If you later want remote access (travel / multiple users), add a reverse proxy (Traefik) and/or a VPN overlay (Tailscale/WireGuard).
+
+## Remote Access (Optional)
+- To securely access Merlin while traveling, you'll need to establish a VPN ([Tailscale](https://tailscale.com), [WireGuard](https://www.wireguard.com/)) and configure the rag-api docker container as a 
+ node.
