@@ -66,13 +66,31 @@ curl -s http://127.0.0.1:6333/ | head
 
 ---
 
-## 3) Start Ollama (LLM runtime)
+## 3)  Launching the LLMs:
+
+### 3.a) Launch Ollama (LLM runtime) with GPUs (assumes a GPU is installed):
 
 ```bash
 docker rm -f ollama-llm 2>/dev/null || true
 
 docker run -d \
   --name ollama-llm \
+  --gpus all \
+  --network ragnet \
+  -p 11434:11434 \
+  -v ollama:/root/.ollama \
+  --restart unless-stopped \
+  ollama/ollama
+```
+
+### 3.b)  Launch Ollama (LLM runtime) without GPUs (for machines without a stand alone GPU.  Will require at least 8 GB of free RAM, inferences will take significantly longer than on GPU enabled devices):
+
+```bash
+docker rm -f ollama-llm 2>/dev/null || true
+
+docker run -d \
+  --name ollama-llm \
+  --gpus all \
   --network ragnet \
   -p 11434:11434 \
   -v ollama:/root/.ollama \
@@ -98,10 +116,10 @@ docker exec -it ollama-llm ollama pull llava:7b
 
 ## 4) Build Merlin RAG API image
 
-From the folder containing `Dockerfile`, `app.py`, and `requirements.txt`:
+From the folder containing `Dockerfile`, `app.py`, and `requirements.txt`, replace the version with your downloaded version number in X.Y format then run:
 
 ```bash
-docker build -t merlin-rag-api:local .
+docker build -t merlin-rag-api:<version number> .
 ```
 
 ---
@@ -111,6 +129,8 @@ docker build -t merlin-rag-api:local .
 Merlin stores:
 - Document data / uploads under `/rag-data`
 - SQLite state under `/data/chat.db`
+
+To launch the RAG
 
 ```bash
 docker rm -f rag-api 2>/dev/null || true
@@ -129,7 +149,7 @@ docker run -d \
   -v rag_data:/rag-data \
   -v rag_api_data:/data \
   --restart unless-stopped \
-  merlin-rag-api:local
+  merlin-rag-api:<version number> 
 ```
 
 Open Merlin:
@@ -140,6 +160,12 @@ Health check:
 
 ```bash
 curl -s http://127.0.0.1:8000/health
+```
+
+If running this off of a Spark, M4 set-up for use on your local VPN:
+
+```bash
+curl -s http://<server_ip_address>:8000/health
 ```
 
 ---

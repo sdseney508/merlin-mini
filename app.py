@@ -22,7 +22,7 @@ from typing import List, Optional, Dict, Any, Tuple
 import requests
 import bcrypt
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
-from fastapi import FastAPI, HTTPException, UploadFile, File, Request, Response, Depends
+from fastapi import FastAPI, HTTPException, UploadFile, File, Request, Response, Depends, BackgroundTasks
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
@@ -844,8 +844,30 @@ def files(user: Dict = Depends(get_optional_user)):
     return {"text": list_dir(TEXT_DIR), "incoming": list_dir(INCOMING_DIR)}
 
 
+def _ingest_single_file(path: str) -> None:
+    """Background task: extract, chunk, embed, and upsert a single file into Qdrant."""
+    try:
+        content = extract_text_for_file(path)
+        content = normalize(content)
+        if not content:
+            print(f"Auto-ingest: no content extracted from {path}")
+            return
+        ext = os.path.splitext(path)[1].lower()
+        pieces = chunk_text(content)
+        chunks = [(p, {"source": os.path.basename(path), "chunk_index": i, "format": ext})
+                  for i, p in enumerate(pieces)]
+        texts = [c[0] for c in chunks]
+        vecs = ollama_embed(texts)
+        client = qdrant_client()
+        ensure_collection(client, vector_size=len(vecs[0]))
+        upserted = upsert_chunks(client, chunks, vecs)
+        print(f"Auto-ingest: {os.path.basename(path)} → {upserted} points upserted")
+    except Exception as e:
+        print(f"Auto-ingest error for {path}: {e}")
+
+
 @app.post("/upload")
-async def upload(file: UploadFile = File(...), user: Dict = Depends(get_optional_user)):
+async def upload(file: UploadFile = File(...), background_tasks: BackgroundTasks = BackgroundTasks(), user: Dict = Depends(get_optional_user)):
     filename = (file.filename or "").strip()
     if not filename:
         raise HTTPException(status_code=400, detail="Missing filename")
@@ -865,7 +887,10 @@ async def upload(file: UploadFile = File(...), user: Dict = Depends(get_optional
         shutil.copyfileobj(file.file, f)
 
     needs_conversion = not (is_text or is_image)
-    return {"ok": True, "saved_to": str(dest_path), "needs_conversion": needs_conversion}
+    ingesting = is_text or is_image
+    if ingesting:
+        background_tasks.add_task(_ingest_single_file, str(dest_path))
+    return {"ok": True, "saved_to": str(dest_path), "needs_conversion": needs_conversion, "ingesting": ingesting}
 
 
 @app.post("/ingest", response_model=IngestResponse)

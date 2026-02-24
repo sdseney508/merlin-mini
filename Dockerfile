@@ -30,8 +30,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py .
 
-# Optional: run as non-root
-RUN useradd -m -u 10001 appuser
+# ---- Non-root user + writable runtime dirs for security and compatibility with OpenShift/Kubernetes ----
+# Create appuser (fixed uid is good for consistency across hosts)
+RUN useradd -m -u 10001 -s /bin/bash appuser \
+  # Create dirs your app writes to (these become mountpoints for volumes)
+  && mkdir -p /rag-data/incoming /data \
+  # Ensure appuser can write to them
+  && chown -R appuser:appuser /rag-data /data /app && chmod 0755 /rag-data /rag-data/incoming /data
 USER appuser
 
 EXPOSE 8000
