@@ -11,11 +11,39 @@ Everything can be run **local-only**.
 To enable hitting your copy oF Merlin remotely, you'll need to establish a VPN (tailscale, wiregurad, etc.) and create a node for the docker container.  
 
 ---
+## Version Description and Components
+
+### Version Information
+Name: MERLIN-mini
+Version: 1.0.1,
+Description: RAG agent used to analyze documents, generate new documents, and allow users to manage multiple projects.
+
+### Change Log
+Version:    Change:
+1.0.0       Initial Release
+1.0.1       Updated qdrant-client to match the server; added in autoingest route after file upload
+
+### Docker Components
+fastapi==0.115.8
+uvicorn[standard]==0.34.0
+qdrant-client==1.17.0
+requests==2.32.3
+pydantic==2.10.6
+python-multipart==0.0.20
+bcrypt
+itsdangerous==2.2.0
+ddgs
+python-docx==1.1.2
+openpyxl==3.1.5
+pytesseract==0.3.13
+Pillow==11.1.0
+matplotlib==3.9.3
+
 
 ## Prereqs
 
 - Docker installed (Docker Desktop on Windows/macOS; Docker Engine on Linux)
-- Machine capable of running Ollama (GPU recommended; CPU works but slower)
+- Machine capable of running Ollama (GPU recommended; CPU works but slower and requires at least 8 GB of free rAM; 16 GB for more stable performance)
 
 ---
 

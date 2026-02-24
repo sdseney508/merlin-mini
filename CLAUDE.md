@@ -78,3 +78,4 @@ Four services communicate over a shared `ragnet` Docker network:
 - No linting/formatting configuration is set up.
 - The Dockerfile runs as non-root user `appuser` (UID 10001) for security.
 - Database schema changes are handled inline in the `db()` function with `ALTER TABLE` try/except blocks (no migration framework).
+- On all code changes update the version number and change log in the README.md file
