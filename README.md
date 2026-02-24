@@ -15,12 +15,16 @@ To enable hitting your copy oF Merlin remotely, you'll need to establish a VPN (
 
 ### Version Information
 Name: MERLIN-mini
-Version: 1.0.1,
+
+Version: 1.0.1
+
 Description: RAG agent used to analyze documents, generate new documents, and allow users to manage multiple projects.
 
 ### Change Log
 Version:    Change:
+
 1.0.0       Initial Release
+
 1.0.1       Updated qdrant-client to match the server; added in autoingest route after file upload
 
 ### Docker Components
