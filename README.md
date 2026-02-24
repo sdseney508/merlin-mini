@@ -28,20 +28,20 @@ Version:    Change:
 1.0.1       Updated qdrant-client to match the server; added in autoingest route after file upload
 
 ### Docker Components
-fastapi==0.115.8
-uvicorn[standard]==0.34.0
-qdrant-client==1.17.0
-requests==2.32.3
-pydantic==2.10.6
-python-multipart==0.0.20
-bcrypt
-itsdangerous==2.2.0
-ddgs
-python-docx==1.1.2
-openpyxl==3.1.5
-pytesseract==0.3.13
-Pillow==11.1.0
-matplotlib==3.9.3
+- fastapi==0.115.8
+- uvicorn[standard]==0.34.0
+- qdrant-client==1.17.0
+- requests==2.32.3
+- pydantic==2.10.6
+- python-multipart==0.0.20
+- bcrypt
+- itsdangerous==2.2.0
+- ddgs
+- python-docx==1.1.2
+- openpyxl==3.1.5
+- pytesseract==0.3.13
+- Pillow==11.1.0
+- matplotlib==3.9.3
 
 
 ## Prereqs
