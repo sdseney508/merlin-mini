@@ -1,0 +1,33 @@
+
+---
+
+# `docker-compose.yml`
+
+services:
+  merlin-rag:
+    build: .
+    container_name: merlin-rag
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - merlin_rag_data:/rag-data
+      - merlin_sqlite_data:/data
+    depends_on:
+      - qdrant
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: merlin-qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    restart: unless-stopped
+
+volumes:
+  merlin_rag_data:
+  merlin_sqlite_data:
+  qdrant_storage:
