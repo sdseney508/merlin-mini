@@ -1,0 +1,16 @@
+fastapi==0.115.8
+uvicorn[standard]==0.34.0
+qdrant-client==1.17.1
+requests==2.32.3
+pydantic==2.10.6
+python-multipart==0.0.20
+bcrypt==5.0.0
+itsdangerous==2.2.0
+PyPDF2==3.0.1
+python-docx==1.1.2
+openpyxl==3.1.5
+pytesseract>=0.3.10
+Pillow>=10.0.0
+matplotlib>=3.8.0
+reportlab==4.4.10
+crawl4ai==0.8.0
